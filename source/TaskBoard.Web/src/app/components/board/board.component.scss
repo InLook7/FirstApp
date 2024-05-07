@@ -56,10 +56,13 @@
     .board-wrapper {
         display: flex;
         flex-grow: 1;
+        overflow-x: auto;
 
         .board-columns {
-            display: flex;
             flex-grow: 1;
+            display: inline-block;
+            vertical-align: top;
+            white-space: normal;
 
             .board-column {
                 width: 300px;
