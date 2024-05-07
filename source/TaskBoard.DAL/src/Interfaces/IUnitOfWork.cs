@@ -7,6 +7,7 @@ public interface IUnitOfWork
 	ICardRepository CardRepository { get; }
 	IStatusRepository StatusRepository { get; }
 	IPriorityRepository PriorityRepository { get; }
+	IActivityRepository ActivityRepository { get; }
 	
 	Task SaveAsync();
 }

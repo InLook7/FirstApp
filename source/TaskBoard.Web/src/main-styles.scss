@@ -1,0 +1,13 @@
+$control-border-width: 2px;
+$input-border-color: transparent;
+$input-shadow: none;
+
+html, body {
+    height: 100%;
+}
+
+html {
+    background-image: url(./assets/background.jpg);
+    background-size: cover;
+    overflow-y: auto !important;
+}

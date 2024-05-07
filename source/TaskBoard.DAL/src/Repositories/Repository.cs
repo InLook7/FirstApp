@@ -7,7 +7,7 @@ namespace TaskBoard.DAL.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
 {
-	private readonly DbSet<TEntity> _dbSet;
+	protected readonly DbSet<TEntity> _dbSet;
 
 	public Repository(AppDbContext context)
 	{
@@ -40,7 +40,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
 	}
 
 	public async Task DeleteByIdAsync(int id)
-	{
+	{	
 		await _dbSet.Where(e => e.Id == id).ExecuteDeleteAsync();
 	}
 }

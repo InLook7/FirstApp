@@ -1,0 +1,84 @@
+<div class="root">
+    <div class="board">
+
+        <div class="board-bar">
+            <p class="board-name">Task Board</p>
+            <button (click)="openHistoryModal()">
+                <p class="board-history">History</p>
+            </button>
+        </div>
+
+        <div class="board-wrapper">
+            <div class="board-columns" *ngFor="let status of statuses">
+
+                <div class="board-column">
+                    <div class="column-head">
+                        <div class="column-title">
+                            {{status.name}}
+                        </div>
+
+                        <div class="cards-sum">
+                            {{statusCounts[status.id]}}
+                        </div>
+
+                        <div class="dots-menu">
+                            <button mat-icon-button [matMenuTriggerFor]="menu">
+                                <mat-icon class="dots-icon">more_vert</mat-icon>
+                            </button>
+                            <mat-menu #menu="matMenu">
+                                <mat-list>
+                                <button class="edit-button" (click)="openEditListModal(status)" mat-list-item>
+                                    <mat-icon>edit</mat-icon>Edit
+                                </button>
+                                <button class="delete-button" (click)="deleteStatus(status.id)" mat-list-item>
+                                    <div class="text-delete-button"><mat-icon>delete</mat-icon>Delete</div>
+                                </button>
+                                </mat-list>
+                            </mat-menu>
+                        </div>
+                    </div>
+                    
+                    <button (click)="openNewCardModal()">
+                        <div class="new-column">➕ Add new card</div>
+                    </button>
+                    
+                    <div class="tasks-container">
+                        <div class="task" *ngFor="let card of filterCards(status.id)">
+                            <div class="task-head">
+                                <p class="task-name" (click)="openCardModal(card)">{{card.name}}</p>
+
+                                <button mat-icon-button [matMenuTriggerFor]="menu">
+                                    <mat-icon>more_vert</mat-icon>
+                                </button>
+                                <mat-menu #menu="matMenu">
+                                    <mat-list>
+                                    <button class="edit-button" (click)="openEditCardModal(card)" mat-list-item>
+                                        <mat-icon>edit</mat-icon>Edit
+                                    </button>
+                                    <button class="delete-button" (click)="deleteCard(card.id)" mat-list-item>
+                                        <div class="text-delete-button"><mat-icon>delete</mat-icon>Delete</div>
+                                    </button>
+                                    </mat-list>
+                                </mat-menu>
+                            </div>
+
+                            <p class="task-description">{{card.description}}</p>
+                            <p class="task-date">📅 {{card.dueDate | date: 'E, dd LLL'}}</p>
+                            <p class="task-priority">• {{card.priorityName}}</p>
+                            <select class="select is-small" #selected (change)="onSelected(card.id, +selected.value)">
+                                <option hidden selected>Move to:</option>
+                                <option *ngFor="let title of statuses" [value]="title.id">
+                                    {{title.name}}
+                                </option>                   
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <button class="new-list" (click)="openNewListModal()">Add another list</button>
+        </div>
+
+    </div>
+</div>
