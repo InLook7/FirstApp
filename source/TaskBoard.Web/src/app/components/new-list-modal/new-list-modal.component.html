@@ -1,0 +1,17 @@
+<h1 mat-dialog-title class="modal-title">New List</h1>
+
+<div mat-dialog-content class="form-container">
+  <form #form="ngForm">
+    <div class="fields-container">
+      <mat-form-field>
+        <mat-label>List name</mat-label>
+        <input matInput name="title" ngModel required>
+      </mat-form-field>
+    </div>
+  </form>
+</div>
+
+<div mat-dialog-actions class="modal-actions">
+  <button mat-button color="primary" (click)="onCreate(form)" [disabled]="form.invalid">Create</button>
+  <button mat-button color="warn" (click)="onClose()" mat-dialog-close>Close</button>
+</div>

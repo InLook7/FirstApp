@@ -1,0 +1,43 @@
+<h1 mat-dialog-title class="modal-title">Edit Card</h1>
+
+<div mat-dialog-content class="form-container">
+  <form #form="ngForm">
+    <div class="fields-container">
+      <mat-form-field>
+        <mat-label>Card name</mat-label>
+        <input matInput name="title" [ngModel]="data.name" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Priority</mat-label>
+        <mat-select name="priority" [ngModel]="data.priorityId">
+          <mat-option *ngFor="let priority of priorities" [value]="priority.id">
+            {{priority.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Due Data</mat-label>
+        <input matInput [matDatepicker]="picker" name="date" [ngModel]="data.dueDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>List</mat-label>
+        <mat-select name="status" [ngModel]="data.statusId">
+          <mat-option *ngFor="let status of statuses" [value]="status.id">
+            {{status.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea matInput name="description" [ngModel]="data.description"></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</div>
+
+<div mat-dialog-actions class="modal-actions">
+  <button mat-button color="primary" (click)="onSave(form)" [disabled]="form.invalid">Save</button>
+  <button mat-button color="warn" (click)="onClose()" mat-dialog-close>Close</button>
+</div>

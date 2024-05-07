@@ -5,5 +5,9 @@
 .vs/
 .idea/
 
-node_modules/
 .angular/
+node_modules/
+/dist
+/tmp
+/out-tsc
+/bazel-out
