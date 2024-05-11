@@ -14,6 +14,7 @@ import { PriorityService } from '../../services/priority.service';
 import { Status } from '../../models/status';
 import { Card } from '../../models/card';
 import { Priority } from '../../models/priority';
+import { Board } from '../../models/board';
 
 @Component({
   selector: 'app-new-card-modal',
@@ -41,7 +42,7 @@ export class NewCardModalComponent {
   priorities: Priority[] = [];
 
   constructor(public dialogRef: MatDialogRef<NewCardModalComponent>, 
-    @Inject(MAT_DIALOG_DATA) public data: Card, 
+    @Inject(MAT_DIALOG_DATA) public data: Board, 
     private statusService: StatusService, 
     private priorityService: PriorityService, 
     private cardService: CardService) { }
@@ -56,7 +57,7 @@ export class NewCardModalComponent {
   }
 
   loadStatusList(): void {
-    this.statusService.getStatuses().subscribe({
+    this.statusService.getStatusesByBoardId(this.data.id).subscribe({
       next: (data: any) => {
         this.statuses = data;
       }
@@ -74,6 +75,7 @@ export class NewCardModalComponent {
   onCreate(form: NgForm): void {
     if (form.valid) {
       let cardData: Omit<Card, 'id' | 'priorityName'> = { 
+        boardId: this.data.id,
         name: form.value.title,
         priorityId: form.value.priority,
         dueDate: form.value.date,

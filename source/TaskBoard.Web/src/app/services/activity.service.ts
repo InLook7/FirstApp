@@ -8,8 +8,8 @@ export class ActivityService {
 
   constructor(private http: HttpClient) { }
 
-  getLogs() {
-    return this.http.get("http://localhost:9000/activity");      
+  getLogsByBoardId(boardId: number) {
+    return this.http.get(`http://localhost:9000/activity/board/${boardId}`);      
   }
 
   getLogsByCardId(cardId: number) {

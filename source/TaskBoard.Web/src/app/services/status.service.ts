@@ -18,6 +18,10 @@ export class StatusService {
     return this.http.get(`http://localhost:9000/status/${statusId}`); 
   }
 
+  getStatusesByBoardId(boardId: number) {
+    return this.http.get(`http://localhost:9000/status/board/${boardId}`); 
+  }
+
   addStatus(status: Status) {
     return this.http.post("http://localhost:9000/status", status); 
   }

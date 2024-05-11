@@ -17,11 +17,13 @@ public class ActivityService : IActivityService
 		_mapper = mapper;
 	}
 	
-	public async Task<IEnumerable<ActivityDTO>> GetAllLogs()
+	public async Task<IEnumerable<ActivityDTO>> GetLogsByBoardId(int id)
 	{
 		var logs = await _unitOfWork.ActivityRepository.GetAllAsync();
 		
-		logs = logs.OrderByDescending(l => l.Date);
+		logs = logs
+			.Where(l => l.BoardId == id)
+			.OrderByDescending(l => l.Date);
 		
 		return _mapper.Map<IEnumerable<ActivityDTO>>(logs);
 	}
@@ -41,6 +43,7 @@ public class ActivityService : IActivityService
 	{
 		var log = new Activity
 		{
+			BoardId = card.BoardId,
 			CardId = card.Id,
 			Details = $"You created ///{card.Name}///",
 			Date = DateTime.UtcNow
@@ -56,6 +59,7 @@ public class ActivityService : IActivityService
 		{
 			var log = new Activity
 			{
+				BoardId = card.BoardId,
 				CardId = card.Id,
 				Details = $"You renamed ///{previousCard.Name}/// to ///{card.Name}///",
 				Date = DateTime.UtcNow
@@ -66,6 +70,7 @@ public class ActivityService : IActivityService
 		{
 			var log = new Activity
 			{
+				BoardId = card.BoardId,
 				CardId = card.Id,
 				Details = $"You changed the date ///{card.Name}///",
 				Date = DateTime.UtcNow
@@ -76,6 +81,7 @@ public class ActivityService : IActivityService
 		{
 			var log = new Activity
 			{
+				BoardId = card.BoardId,
 				CardId = card.Id,
 				Details = $"You changed the priority ///{card.Name}/// from %%%{previousCard.PriorityName}%%% to %%%{card.PriorityName}%%%",
 				Date = DateTime.UtcNow
@@ -86,6 +92,7 @@ public class ActivityService : IActivityService
 		{
 			var log = new Activity
 			{
+				BoardId = card.BoardId,
 				CardId = card.Id,
 				Details = $"You changed the description ///{card.Name}///",
 				Date = DateTime.UtcNow
@@ -96,6 +103,7 @@ public class ActivityService : IActivityService
 		{
 			var log = new Activity
 			{
+				BoardId = card.BoardId,
 				CardId = card.Id,
 				Details = $"You moved ///{card.Name}/// to %%%{statusName}%%%",
 				Date = DateTime.UtcNow
@@ -110,6 +118,7 @@ public class ActivityService : IActivityService
 	{
 		var log = new Activity
 		{
+			BoardId = card.BoardId,
 			CardId = card.Id,
 			Details = $"You moved ///{card.Name}/// to %%%{statusName}%%%",
 			Date = DateTime.UtcNow
@@ -123,6 +132,7 @@ public class ActivityService : IActivityService
 	{
 		var log = new Activity
 		{
+			BoardId = card.BoardId,
 			CardId = card.Id,
 			Details = $"You deleted ///{card.Name}///",
 			Date = DateTime.UtcNow

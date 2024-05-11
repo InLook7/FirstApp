@@ -19,6 +19,7 @@ public static class Seed
 			if (check == false)
 			{
 			 	await SeedPriorities(serviceProvider);
+				await SeedBoards(serviceProvider);
 				await SeedStatuses(serviceProvider);
 				await SeedCards(serviceProvider);
 			}
@@ -41,6 +42,21 @@ public static class Seed
 		foreach (var priorityDTO in priorityDTOs)
 			await priorityService.AddAsync(priorityDTO);
 	}
+	
+	private static async Task SeedBoards(IServiceProvider serviceProvider)
+	{
+		var boardService = serviceProvider.GetRequiredService<IBoardService>();
+
+		var boardDOTs = new List<BoardDTO>
+		{
+			new BoardDTO { Name = "Funny things" },
+			new BoardDTO { Name = "Project A" },
+			new BoardDTO { Name = "Infinity" },
+		};
+
+		foreach (var boardDOT in boardDOTs)
+			await boardService.AddAsync(boardDOT);
+	}
 
 	private static async Task SeedStatuses(IServiceProvider serviceProvider)
 	{
@@ -48,10 +64,13 @@ public static class Seed
 
 		var statusDOTs = new List<StatusDTO>
 		{
-			new StatusDTO { Name = "To do" },
-			new StatusDTO { Name = "Planned" },
-			new StatusDTO { Name = "In Progress" },
-			new StatusDTO { Name = "Closed" }
+			new StatusDTO { Name = "To do", BoardId = 1 },
+			new StatusDTO { Name = "Planned",  BoardId = 1 },
+			new StatusDTO { Name = "In Progress",  BoardId = 1 },
+			new StatusDTO { Name = "Closed",  BoardId = 1 },
+			new StatusDTO { Name = "Level 1",  BoardId = 2 },
+			new StatusDTO { Name = "Level 2",  BoardId = 2 },
+			new StatusDTO { Name = "Blank",  BoardId = 3 }
 		};
 
 		foreach (var statusDOT in statusDOTs)
@@ -65,18 +84,20 @@ public static class Seed
 
 		var cardDTOs = new List<CardDTO>
 		{
-			new CardDTO { Name = "HelloWorldCard", StatusId = 4, DueDate = DateTime.Parse("2024-05-01").ToUniversalTime(), Description = "First task ever", PriorityId = 3 },
-			new CardDTO { Name = "Something important", StatusId = 4, DueDate = DateTime.Parse("2024-05-02").ToUniversalTime(), Description = "Important things", PriorityId = 2 },
-			new CardDTO { Name = "Unicorn Wrangling", StatusId = 3, DueDate = DateTime.Parse("2024-05-02").ToUniversalTime(), Description = "Capture escaped unicorns in the office", PriorityId = 3 },
-			new CardDTO { Name = "Finding Nemo's Cousin", StatusId = 3, DueDate = DateTime.Parse("2024-05-03").ToUniversalTime(), Description = "Search for Nemo's lesser-known cousin in the fish tank", PriorityId = 2 },
-			new CardDTO { Name = "Taming the Office Poltergeist", StatusId = 2, DueDate = DateTime.Parse("2024-05-03").ToUniversalTime(), Description = "Teach the mischievous office poltergeist some manners", PriorityId = 1 },
-			new CardDTO { Name = "Operation: Stealth Snack", StatusId = 2, DueDate = DateTime.Parse("2024-05-03").ToUniversalTime(), Description = "Successfully execute a covert snack raid from the break room", PriorityId = 3 },
-			new CardDTO { Name = "Convincing the Coffee Machine to Work Overtime", StatusId = 1, DueDate = DateTime.Parse("2024-05-03").ToUniversalTime(), Description = "Negotiate with the coffee machine for extended working hours", PriorityId = 2 },
-			new CardDTO { Name = "Cat Herding Training", StatusId = 1, DueDate = DateTime.Parse("2024-05-04").ToUniversalTime(), Description = "Learn the art of herding cats for better project management", PriorityId = 3 },
-			new CardDTO { Name = "Juggling Invisible Tasks", StatusId = 2, DueDate = DateTime.Parse("2024-05-04").ToUniversalTime(), Description = "Master the skill of juggling tasks that seem to disappear", PriorityId = 2 },
-			new CardDTO { Name = "Epic Battle Against Procrastination", StatusId = 3, DueDate = DateTime.Parse("2024-05-05").ToUniversalTime(), Description = "Engage in an epic showdown against the mighty procrastination monster", PriorityId = 3 },
-			new CardDTO { Name = "Deciphering Ancient Code (Written by Interns)", StatusId = 4, DueDate = DateTime.Parse("2024-05-05").ToUniversalTime(), Description = "Unlock the secrets of ancient code left behind by previous interns", PriorityId = 2 },
-			new CardDTO { Name = "Ghost Hunting Expedition", StatusId = 3, DueDate = DateTime.Parse("2024-05-05").ToUniversalTime(), Description = "Embark on a ghost hunting adventure in the office basement", PriorityId = 3 }
+			new CardDTO { Name = "HelloWorldCard", BoardId = 1, StatusId = 4, DueDate = DateTime.Parse("2024-05-01").ToUniversalTime(), Description = "First task ever", PriorityId = 3 },
+			new CardDTO { Name = "Something important", BoardId = 1, StatusId = 4, DueDate = DateTime.Parse("2024-05-02").ToUniversalTime(), Description = "Important things", PriorityId = 2 },
+			new CardDTO { Name = "Unicorn Wrangling", BoardId = 1, StatusId = 3, DueDate = DateTime.Parse("2024-05-02").ToUniversalTime(), Description = "Capture escaped unicorns in the office", PriorityId = 3 },
+			new CardDTO { Name = "Finding Nemo's Cousin", BoardId = 1, StatusId = 3, DueDate = DateTime.Parse("2024-05-03").ToUniversalTime(), Description = "Search for Nemo's lesser-known cousin in the fish tank", PriorityId = 2 },
+			new CardDTO { Name = "Taming the Office Poltergeist", BoardId = 1, StatusId = 2, DueDate = DateTime.Parse("2024-05-03").ToUniversalTime(), Description = "Teach the mischievous office poltergeist some manners", PriorityId = 1 },
+			new CardDTO { Name = "Operation: Stealth Snack", BoardId = 1, StatusId = 2, DueDate = DateTime.Parse("2024-05-03").ToUniversalTime(), Description = "Successfully execute a covert snack raid from the break room", PriorityId = 3 },
+			new CardDTO { Name = "Convincing the Coffee Machine to Work Overtime", BoardId = 1, StatusId = 1, DueDate = DateTime.Parse("2024-05-03").ToUniversalTime(), Description = "Negotiate with the coffee machine for extended working hours", PriorityId = 2 },
+			new CardDTO { Name = "Cat Herding Training", BoardId = 1, StatusId = 1, DueDate = DateTime.Parse("2024-05-04").ToUniversalTime(), Description = "Learn the art of herding cats for better project management", PriorityId = 3 },
+			new CardDTO { Name = "Juggling Invisible Tasks", BoardId = 1, StatusId = 2, DueDate = DateTime.Parse("2024-05-04").ToUniversalTime(), Description = "Master the skill of juggling tasks that seem to disappear", PriorityId = 2 },
+			new CardDTO { Name = "Epic Battle Against Procrastination", BoardId = 1, StatusId = 3, DueDate = DateTime.Parse("2024-05-05").ToUniversalTime(), Description = "Engage in an epic showdown against the mighty procrastination monster", PriorityId = 3 },
+			new CardDTO { Name = "Deciphering Ancient Code (Written by Interns)", BoardId = 1, StatusId = 4, DueDate = DateTime.Parse("2024-05-05").ToUniversalTime(), Description = "Unlock the secrets of ancient code left behind by previous interns", PriorityId = 2 },
+			new CardDTO { Name = "Ghost Hunting Expedition", BoardId = 1, StatusId = 3, DueDate = DateTime.Parse("2024-05-05").ToUniversalTime(), Description = "Embark on a ghost hunting adventure in the office basement", PriorityId = 3 },
+			new CardDTO { Name = "Secret", BoardId = 2, StatusId = 5, DueDate = DateTime.Parse("2024-05-12").ToUniversalTime(), Description = "Something secret", PriorityId = 1 },
+			new CardDTO { Name = "Not secret", BoardId = 2, StatusId = 6, DueDate = DateTime.Parse("2024-05-12").ToUniversalTime(), Description = "Not Something secret", PriorityId = 3 },
 		};
 
 		foreach (var cardDTO in cardDTOs)
