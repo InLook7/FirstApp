@@ -15,11 +15,11 @@ public class ActivityController : ControllerBase
 		_activityService = activityService;
 	}
 	
-	// GET: activity/
-	[HttpGet]
-	public async Task<ActionResult<IEnumerable<ActivityDTO>>> GetAllLogs()
+	// GET: activity/{boardId}
+	[HttpGet("board/{boardId}")]
+	public async Task<ActionResult<IEnumerable<ActivityDTO>>> GetLogsByBoardId(int boardId)
 	{
-		var logs = await _activityService.GetAllLogs();
+		var logs = await _activityService.GetLogsByBoardId(boardId);
 		
 		return Ok(logs);
 	}

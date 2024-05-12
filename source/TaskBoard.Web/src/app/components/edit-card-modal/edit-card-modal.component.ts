@@ -56,7 +56,7 @@ export class EditCardModalComponent {
   }
   
   loadStatusList(): void {
-    this.statusService.getStatuses().subscribe({
+    this.statusService.getStatusesByBoardId(this.data.boardId).subscribe({
       next: (data: any) => {
         this.statuses = data;
       }
@@ -73,8 +73,9 @@ export class EditCardModalComponent {
 
   onSave(form: NgForm): void {
     if (form.valid) {
-      let cardData: Omit<Card, 'priorityName'> = { 
+      let cardData: Omit<Card, 'priorityName'> = {
         id: this.data.id,
+        boardId: this.data.boardId, 
         name: form.value.title,
         priorityId: form.value.priority,
         dueDate: form.value.date,

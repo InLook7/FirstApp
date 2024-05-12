@@ -29,19 +29,19 @@ export class HistoryModalComponent {
   showMoreButtonVisible = false;
 
   constructor(public dialogRef: MatDialogRef<HistoryModalComponent>, 
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: number,
     private activityService: ActivityService) { }
 
   ngOnInit(): void {
-    this.loadAllLogs();
+    this.loadLogsByBoardId();
   }
 
   onClose(): void {
     this.dialogRef.close();
   }
 
-  loadAllLogs(): void {
-    this.activityService.getLogs().subscribe({
+  loadLogsByBoardId(): void {
+    this.activityService.getLogsByBoardId(this.data).subscribe({
       next: (data: any) => {
         this.logs = data;
         this.updateLogs();

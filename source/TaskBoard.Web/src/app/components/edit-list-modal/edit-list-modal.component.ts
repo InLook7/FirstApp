@@ -39,7 +39,7 @@ export class EditListModalComponent {
 
   onSave(form: NgForm): void {
     if (form.valid) {
-      let status: Status = { id: this.data.id, name: form.value.title };
+      let status: Status = { id: this.data.id, name: form.value.title, boardId: this.data.boardId };
       
       this.statusService.updateStatus(status).subscribe(() =>{
         this.dialogRef.close();

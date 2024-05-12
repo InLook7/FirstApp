@@ -15,4 +15,5 @@ public class AppDbContext : DbContext
 	public DbSet<Status> Statuses { get; set; }
 	public DbSet<Priority> Priorities { get; set; }
 	public DbSet<Activity> Activities { get; set; }
+	public DbSet<Board> Boards { get; set; }
 }

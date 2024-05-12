@@ -59,7 +59,7 @@ public class CardController : ControllerBase
 	[HttpDelete("{cardId}")]
 	public async Task<ActionResult> DeleteCardById(int cardId)
 	{
-		var card = await _cardService.GetByIdAsync(cardId);
+		var card = await _cardService.GetByIdWithDetailsAsync(cardId);
 		
 		await _cardService.DeleteByIdAsync(cardId);
 
@@ -72,7 +72,7 @@ public class CardController : ControllerBase
 	[HttpPost("changeStatus/{cardId}/{statusId}")]
 	public async Task<ActionResult> ChangeStatusCard(int cardId, int statusId)
 	{
-		var card = await _cardService.GetByIdAsync(cardId);
+		var card = await _cardService.GetByIdWithDetailsAsync(cardId);
 		var status = await _statusService.GetByIdAsync(statusId);
 		
 		await _cardService.ChangeStatus(cardId, statusId);
