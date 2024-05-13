@@ -68,5 +68,6 @@ public class StatusService : IStatusService
 	public async Task DeleteByIdAsync(int id)
 	{
 		await _unitOfWork.StatusRepository.DeleteByIdAsync(id);
+		await _unitOfWork.SaveAsync();
 	}
 }

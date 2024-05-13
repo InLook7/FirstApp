@@ -55,5 +55,6 @@ public class PriorityService : IPriorityService
 	public async Task DeleteByIdAsync(int id)
 	{
 		await _unitOfWork.PriorityRepository.DeleteByIdAsync(id);
+		await _unitOfWork.SaveAsync();
 	}
 }

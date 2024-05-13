@@ -54,3 +54,5 @@ app.MapControllers();
 await app.SeedData();
 
 app.Run();
+
+public partial class Program { } // for integration tests 

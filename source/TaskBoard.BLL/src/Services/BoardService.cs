@@ -52,5 +52,6 @@ public class BoardService : IBoardService
 	public async Task DeleteByIdAsync(int id)
 	{
 		await _unitOfWork.BoardRepository.DeleteByIdAsync(id);
+		await _unitOfWork.SaveAsync();
 	}  
 }
