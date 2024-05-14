@@ -22,6 +22,10 @@ import { CardModalComponent } from '../card-modal/card-modal.component';
 import { HistoryModalComponent } from '../history-modal/history-modal.component';
 import { NewBoardModalComponent } from '../new-board-modal/new-board-modal.component';
 import { EditBoardModalComponent } from '../edit-board-modal/edit-board-modal.component';
+import { Observable, map, switchMap, take } from 'rxjs';
+import { getCards } from '../../store/actions/card.action';
+import { Store, select } from '@ngrx/store';
+import { selectCards } from '../../store/card.selector';
 
 @Component({
   selector: 'app-board',
@@ -47,11 +51,12 @@ export class BoardComponent {
 
   currentBoard: Board;
   boards: Board[] = [];
-  cards: Card[] = [];
+  cards$: Observable<Card[]>;
   statuses: Status[] = [];
   statusCounts: { [statusId: number]: number } = {};
 
   constructor(private dialog: MatDialog, 
+    private store: Store, 
     private boardService: BoardService,
     private cardService: CardService, 
     private statusService: StatusService, 
@@ -87,11 +92,8 @@ export class BoardComponent {
   }
 
   loadCardList(): void  {
-    this.cardService.getCards().subscribe({
-      next: (data: any) => {
-        this.cards = data;
-      }
-    });
+    this.store.dispatch(getCards());
+    this.cards$ = this.store.pipe(select(selectCards));
 
     this.loadCountCardsByStatuses();
   }
@@ -118,7 +120,9 @@ export class BoardComponent {
   }
 
   filterCards(statudId: number) {
-    return this.cards.filter(x => x.statusId == statudId);
+    return this.cards$.pipe(
+      map(cards => cards.filter(x => x.statusId == statudId))
+    );
   }
 
   changeStatusCard(cardId: number, statusId: number): void {

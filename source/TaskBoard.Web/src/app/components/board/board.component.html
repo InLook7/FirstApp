@@ -56,7 +56,7 @@
                     </button>
                     
                     <div class="tasks-container">
-                        <div class="task" *ngFor="let card of filterCards(status.id)">
+                        <div class="task" *ngFor="let card of filterCards(status.id) | async">
                             <div class="task-head">
                                 <p class="task-name" (click)="openCardModal(card)">{{card.name}}</p>
 
