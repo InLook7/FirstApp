@@ -15,15 +15,6 @@ public class StatusController : ControllerBase
 		_statusService = statusService;
 	}
 	
-	// GET: status/
-	[HttpGet]
-	public async Task<ActionResult<IEnumerable<StatusDTO>>> GetAllStatuses()
-	{
-		var statuses = await _statusService.GetAllAsync();
-		
-		return Ok(statuses);
-	}
-	
 	// GET: status/{statusId}
 	[HttpGet("{statusId}")]
 	public async Task<ActionResult<IEnumerable<StatusDTO>>> GetStatusById(int statusId)
@@ -31,6 +22,15 @@ public class StatusController : ControllerBase
 		var status = await _statusService.GetByIdAsync(statusId);
 		
 		return Ok(status);
+	}
+	
+	// GET: status/board/{boardId}
+	[HttpGet("board/{boardId}")]
+	public async Task<ActionResult<IEnumerable<StatusDTO>>> GetStatusesByBoardId(int boardId)
+	{
+		var statuses = await _statusService.GetStatusesByBoardId(boardId);
+		
+		return Ok(statuses);
 	}
 	
 	// POST: status/

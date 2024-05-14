@@ -16,24 +16,27 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ICardRepository, CardRepository>();
 builder.Services.AddScoped<IStatusRepository, StatusRepository>();
 builder.Services.AddScoped<IPriorityRepository, PriorityRepository>();
-
-builder.Services.AddScoped<CardDTOValidator>();
-builder.Services.AddScoped<StatusDTOValidator>();
-builder.Services.AddScoped<PriorityDTOValidator>();
+builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+builder.Services.AddScoped<IBoardRepository, BoardRepository>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<ICardService, CardService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IPriorityService, PriorityService>();
-builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IActivityService, ActivityService>();
+builder.Services.AddScoped<IBoardService, BoardService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+
+builder.Services.AddScoped<CardDTOValidator>();
+builder.Services.AddScoped<StatusDTOValidator>();
+builder.Services.AddScoped<PriorityDTOValidator>();
 
 builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
 builder.Services.AddDbContext<AppDbContext>(options => 
 {
-	options.UseNpgsql(builder.Configuration.GetValue<string>("DockerConnectionString"));
+	options.UseNpgsql(builder.Configuration.GetValue<string>("ConnectionString"));
 });
 
 builder.Services.AddCors();
@@ -51,3 +54,5 @@ app.MapControllers();
 await app.SeedData();
 
 app.Run();
+
+public partial class Program { } // for integration tests 

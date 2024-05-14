@@ -2,7 +2,20 @@
     <div class="board">
 
         <div class="board-bar">
-            <p class="board-name">Task Board</p>
+            <div class="board-controls">
+                <select class="board-name" (change)="loadStatusList()" [(ngModel)]="currentBoard">
+                    <option *ngFor="let board of boards" [ngValue]="board">
+                        {{board.name}}
+                    </option>  
+                </select>
+
+                <div class="button-group">
+                    <button class="add-button" (click)="openNewBoardModal()">Add</button>
+                    <button class="edit-button" (click)="openEditBoardModal()">Edit</button>
+                    <button class="delete-button" (click)="deleteBoard()">Delete</button>
+                </div>
+             </div>
+
             <button (click)="openHistoryModal()">
                 <p class="board-history">History</p>
             </button>
@@ -43,7 +56,7 @@
                     </button>
                     
                     <div class="tasks-container">
-                        <div class="task" *ngFor="let card of filterCards(status.id)">
+                        <div class="task" *ngFor="let card of filterCards(status.id) | async">
                             <div class="task-head">
                                 <p class="task-name" (click)="openCardModal(card)">{{card.name}}</p>
 
@@ -65,7 +78,7 @@
                             <p class="task-description">{{card.description}}</p>
                             <p class="task-date">📅 {{card.dueDate | date: 'E, dd LLL'}}</p>
                             <p class="task-priority">• {{card.priorityName}}</p>
-                            <select class="select is-small" #selected (change)="onSelected(card.id, +selected.value)">
+                            <select class="select is-small" #selected (change)="changeStatusCard(card.id, +selected.value)">
                                 <option hidden selected>Move to:</option>
                                 <option *ngFor="let title of statuses" [value]="title.id">
                                     {{title.name}}
