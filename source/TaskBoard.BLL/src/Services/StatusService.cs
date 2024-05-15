@@ -36,6 +36,17 @@ public class StatusService : IStatusService
 		return _mapper.Map<StatusDTO>(status);
 	}
 	
+	public async Task<IEnumerable<StatusDTO>> GetStatusesByBoardId(int boardId)
+	{
+		var statuses = await _unitOfWork.StatusRepository.GetAllAsync();
+		
+		statuses = statuses
+			.Where(s => s.BoardId == boardId)
+			.OrderBy(s => s.Id);
+		
+		return _mapper.Map<IEnumerable<StatusDTO>>(statuses);
+	}
+	
 	public async Task AddAsync(StatusDTO dto)
 	{
 		_validator.Validate(dto);
@@ -57,5 +68,6 @@ public class StatusService : IStatusService
 	public async Task DeleteByIdAsync(int id)
 	{
 		await _unitOfWork.StatusRepository.DeleteByIdAsync(id);
+		await _unitOfWork.SaveAsync();
 	}
 }

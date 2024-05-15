@@ -1,0 +1,17 @@
+<h1 mat-dialog-title class="modal-title">Edit Board</h1>
+
+<div mat-dialog-content class="form-container">
+  <form #form="ngForm">
+    <div class="fields-container">
+      <mat-form-field>
+        <mat-label>Board name</mat-label>
+        <input matInput name="title" [ngModel]="data.name" required>
+      </mat-form-field>
+    </div>
+  </form>
+</div>
+
+<div mat-dialog-actions class="modal-actions">
+  <button mat-button color="primary" (click)="onSave(form)" [disabled]="form.invalid">Save</button>
+  <button mat-button color="warn" (click)="onClose()" mat-dialog-close>Close</button>
+</div>

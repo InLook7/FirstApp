@@ -15,12 +15,14 @@ public class UnitOfWork : IUnitOfWork
 		StatusRepository = new StatusRepository(context);
 		PriorityRepository = new PriorityRepository(context);
 		ActivityRepository = new ActivityRepository(context);
+		BoardRepository = new BoardRepository(context);
 	}
 	
 	public ICardRepository CardRepository { get; }
 	public IStatusRepository StatusRepository { get; }
 	public IPriorityRepository PriorityRepository { get; }
 	public IActivityRepository ActivityRepository { get; }
+	public IBoardRepository BoardRepository { get; }
 
 	public async Task SaveAsync()
 	{

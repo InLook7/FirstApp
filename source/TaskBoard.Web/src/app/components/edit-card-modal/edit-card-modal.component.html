@@ -8,10 +8,10 @@
         <input matInput name="title" [ngModel]="data.name" required>
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Priority</mat-label>
-        <mat-select name="priority" [ngModel]="data.priorityId">
-          <mat-option *ngFor="let priority of priorities" [value]="priority.id">
-            {{priority.name}}
+        <mat-label>List</mat-label>
+        <mat-select name="status" [ngModel]="data.statusId">
+          <mat-option *ngFor="let status of statuses" [value]="status.id">
+            {{status.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>
@@ -22,10 +22,10 @@
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
       <mat-form-field>
-        <mat-label>List</mat-label>
-        <mat-select name="status" [ngModel]="data.statusId">
-          <mat-option *ngFor="let status of statuses" [value]="status.id">
-            {{status.name}}
+        <mat-label>Priority</mat-label>
+        <mat-select name="priority" [ngModel]="data.priorityId">
+          <mat-option *ngFor="let priority of priorities" [value]="priority.id">
+            {{priority.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>

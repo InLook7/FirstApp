@@ -1,5 +1,6 @@
 export class Card {
     public id: number;
+    public boardId: number;
     public name: string;
     public priorityId: number;
     public dueDate: Date;
@@ -13,6 +14,7 @@ export class Card {
     constructor(card: Omit<Card, 'priorityName'>)
 
     constructor(card: Omit<Card, 'id' | 'priorityName'> | Omit<Card, 'priorityName'>) {
+        this.boardId = card.boardId;
         this.name = card.name;
         this.priorityId = card.priorityId;
         this.dueDate = card.dueDate;

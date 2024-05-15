@@ -11,3 +11,4 @@ node_modules/
 /tmp
 /out-tsc
 /bazel-out
+*storybook.log

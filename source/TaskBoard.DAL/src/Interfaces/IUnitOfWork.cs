@@ -8,6 +8,7 @@ public interface IUnitOfWork
 	IStatusRepository StatusRepository { get; }
 	IPriorityRepository PriorityRepository { get; }
 	IActivityRepository ActivityRepository { get; }
+	IBoardRepository BoardRepository { get; }
 	
 	Task SaveAsync();
 }
