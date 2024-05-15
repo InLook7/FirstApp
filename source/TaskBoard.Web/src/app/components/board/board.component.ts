@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { Store, select } from '@ngrx/store';
+import { Observable, map } from 'rxjs';
 
 import { BoardService } from '../../services/board.service';
 import { StatusService } from '../../services/status.service';
@@ -22,9 +24,7 @@ import { CardModalComponent } from '../card-modal/card-modal.component';
 import { HistoryModalComponent } from '../history-modal/history-modal.component';
 import { NewBoardModalComponent } from '../new-board-modal/new-board-modal.component';
 import { EditBoardModalComponent } from '../edit-board-modal/edit-board-modal.component';
-import { Observable, map, switchMap, take } from 'rxjs';
-import { getCards } from '../../store/actions/card.action';
-import { Store, select } from '@ngrx/store';
+import { getCards } from '../../store/actions/card.actions';
 import { selectCards } from '../../store/card.selector';
 
 @Component({
@@ -49,10 +49,10 @@ import { selectCards } from '../../store/card.selector';
 })
 export class BoardComponent {
 
-  currentBoard: Board;
-  boards: Board[] = [];
   cards$: Observable<Card[]>;
+  boards: Board[] = [];
   statuses: Status[] = [];
+  currentBoard: Board;
   statusCounts: { [statusId: number]: number } = {};
 
   constructor(private dialog: MatDialog, 
@@ -67,7 +67,7 @@ export class BoardComponent {
     this.loadCardList();
   }
 
-  loadBoardList(boardId?: number): void {
+  loadBoardList(boardId?: number) {
     this.boardService.getBoards().subscribe({
       next: (data: any) => {
         this.boards = data;
@@ -91,7 +91,7 @@ export class BoardComponent {
     this.loadCountCardsByStatuses();
   }
 
-  loadCardList(): void  {
+  loadCardList(): void {
     this.store.dispatch(getCards());
     this.cards$ = this.store.pipe(select(selectCards));
 
@@ -138,7 +138,7 @@ export class BoardComponent {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.loadBoardList();
+      this.loadBoardList(this.currentBoard.id);
     });
   }
 

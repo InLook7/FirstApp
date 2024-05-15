@@ -17,24 +17,30 @@ public class ActivityService : IActivityService
 		_mapper = mapper;
 	}
 	
-	public async Task<IEnumerable<ActivityDTO>> GetLogsByBoardId(int id)
+	public async Task<IEnumerable<ActivityDTO>> GetLastLogsByBoardId(int boardId, int count)
 	{
 		var logs = await _unitOfWork.ActivityRepository.GetAllAsync();
+		var skip = count * 20;
 		
 		logs = logs
-			.Where(l => l.BoardId == id)
-			.OrderByDescending(l => l.Date);
+			.Where(l => l.BoardId == boardId)
+			.OrderByDescending(l => l.Date)
+			.Skip(skip)
+			.Take(20);
 		
 		return _mapper.Map<IEnumerable<ActivityDTO>>(logs);
 	}
 	
-	public async Task<IEnumerable<ActivityDTO>> GetLogsByCardId(int id)
+	public async Task<IEnumerable<ActivityDTO>> GetLastLogsByCardId(int id, int count)
 	{
 		var logs = await _unitOfWork.ActivityRepository.GetAllAsync();
+		var skip = count * 20;
 		
 		logs = logs
 			.Where(l => l.CardId == id)
-			.OrderByDescending(l => l.Date);
+			.OrderByDescending(l => l.Date)
+			.Skip(skip)
+			.Take(20);
 		
 		return _mapper.Map<IEnumerable<ActivityDTO>>(logs);
 	}

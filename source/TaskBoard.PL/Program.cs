@@ -36,7 +36,7 @@ builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
 builder.Services.AddDbContext<AppDbContext>(options => 
 {
-	options.UseNpgsql(builder.Configuration.GetValue<string>("ConnectionString"));
+	options.UseNpgsql(builder.Configuration.GetValue<string>("DockerConnectionString"));
 });
 
 builder.Services.AddCors();

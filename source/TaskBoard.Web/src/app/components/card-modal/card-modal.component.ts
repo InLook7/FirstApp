@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,9 +26,8 @@ import { Activity } from '../../models/activity';
 })
 export class CardModalComponent {
   
+  count: number = -1;
   logs: Activity[] = [];
-  displayedLogs: Activity[] = [];
-  remainingLogs: Activity[] = [];
   showMoreButtonVisible = false;
   statusName: string;
 
@@ -37,34 +36,29 @@ export class CardModalComponent {
     private statusService: StatusService, 
     private activityService: ActivityService) { }
 
-
   ngOnInit(): void {
     this.getStatusById();
-    this.loadLogsByCardId();
+    this.loadLastLogsByCardId();
   }
 
   onClose(): void {
     this.dialogRef.close();
   }
 
-  loadLogsByCardId(): void {
-    this.activityService.getLogsByCardId(this.data.id).subscribe({
-      next: (data: any) => {
-        this.logs = data;
-        this.updateLogs();
+  loadLastLogsByCardId(): void {
+    this.count += 1;
+    this.activityService.getLastLogsByCardId(this.data.id, this.count).subscribe({
+      next: (data: Activity[]) => {
+        this.logs.push(...data);
+
+        if(data.length == 20) {
+          this.showMoreButtonVisible = true;
+        }
+        else {
+          this.showMoreButtonVisible = false;
+        }
       }
     });
-  }
-
-  loadMoreLogs(): void {
-    this.displayedLogs.push(...this.remainingLogs);
-    this.showMoreButtonVisible = false;
-  }
-
-  private updateLogs(): void {
-    this.displayedLogs = this.logs.slice(0, 20);
-    this.remainingLogs = this.logs.slice(20);
-    this.showMoreButtonVisible = this.remainingLogs.length > 0;
   }
 
   formatDetails(details: string): string {

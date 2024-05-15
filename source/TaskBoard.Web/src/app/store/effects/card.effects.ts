@@ -1,7 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Actions, createEffect, ofType } from "@ngrx/effects";
-import { getCards, getCardsSuccess } from "../actions/card.action";
 import { map, mergeMap } from "rxjs/operators";
+
+import { getCards, getCardsSuccess } from "../actions/card.actions";
 import { CardService } from "../../services/card.service";
 
 @Injectable()

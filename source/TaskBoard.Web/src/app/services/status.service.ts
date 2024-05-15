@@ -10,10 +10,6 @@ export class StatusService {
 
   constructor(private http: HttpClient) { }
   
-  getStatuses() {
-    return this.http.get("http://localhost:9000/status");      
-  }
-
   getStatusById(statusId: number) {
     return this.http.get(`http://localhost:9000/status/${statusId}`); 
   }

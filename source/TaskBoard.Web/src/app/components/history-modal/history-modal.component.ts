@@ -23,9 +23,8 @@ import { Activity } from '../../models/activity';
 })
 export class HistoryModalComponent {
 
+  count: number = -1;
   logs: Activity[] = [];
-  displayedLogs: Activity[] = [];
-  remainingLogs: Activity[] = [];
   showMoreButtonVisible = false;
 
   constructor(public dialogRef: MatDialogRef<HistoryModalComponent>, 
@@ -33,31 +32,27 @@ export class HistoryModalComponent {
     private activityService: ActivityService) { }
 
   ngOnInit(): void {
-    this.loadLogsByBoardId();
+    this.loadLastLogsByBoardId();
   }
 
   onClose(): void {
     this.dialogRef.close();
   }
 
-  loadLogsByBoardId(): void {
-    this.activityService.getLogsByBoardId(this.data).subscribe({
-      next: (data: any) => {
-        this.logs = data;
-        this.updateLogs();
+  loadLastLogsByBoardId(): void {
+    this.count += 1;
+    this.activityService.getLastLogsByBoardId(this.data, this.count).subscribe({
+      next: (data: Activity[]) => {
+        this.logs.push(...data);
+
+        if(data.length == 20) {
+          this.showMoreButtonVisible = true;
+        }
+        else {
+          this.showMoreButtonVisible = false;
+        }
       }
     });
-  }
-
-  loadMoreLogs(): void {
-    this.displayedLogs.push(...this.remainingLogs);
-    this.showMoreButtonVisible = false;
-  }
-
-  private updateLogs(): void {
-    this.displayedLogs = this.logs.slice(0, 20);
-    this.remainingLogs = this.logs.slice(20);
-    this.showMoreButtonVisible = this.remainingLogs.length > 0;
   }
 
   formatDetails(details: string): string {

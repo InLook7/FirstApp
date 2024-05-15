@@ -39,7 +39,7 @@ export class EditBoardModalComponent {
     if (form.valid) {
       let board: Board = { id: this.data.id, name: form.value.title };
       
-      this.boardService.updateBoard(board).subscribe(() =>{
+      this.boardService.updateBoard(board).subscribe(() => {
         this.dialogRef.close();
       });
     }

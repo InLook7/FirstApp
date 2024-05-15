@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 
-import { getCards, getCardsSuccess } from '../actions/card.action';
+import { getCards, getCardsSuccess } from '../actions/card.actions';
 import { CardState } from "../card.state";
 
 export const initialState: CardState = {
