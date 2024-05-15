@@ -19,13 +19,13 @@
   <div class="history-side">
     <div class="history-content">
       <ul>
-        <li class="log-item" *ngFor="let log of displayedLogs">
+        <li class="log-item" *ngFor="let log of logs">
           <span [innerHTML]="formatDetails(log.details)"></span> <br> 
           <span class="log-date">{{ log.date | date: "medium" }}</span>
         </li>
       </ul>
 
-      <button class="show-more-button" *ngIf="showMoreButtonVisible" (click)="loadMoreLogs()">
+      <button class="show-more-button" *ngIf="showMoreButtonVisible" (click)="loadLastLogsByCardId()">
         <mat-icon>arrow_downward</mat-icon>Show more
       </button>
     </div>

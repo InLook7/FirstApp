@@ -15,20 +15,20 @@ public class ActivityController : ControllerBase
 		_activityService = activityService;
 	}
 	
-	// GET: activity/
-	[HttpGet]
-	public async Task<ActionResult<IEnumerable<ActivityDTO>>> GetAllLogs()
+	// GET: activity/board/{boardId}/{count}
+	[HttpGet("board/{boardId}/{count}")]
+	public async Task<ActionResult<IEnumerable<ActivityDTO>>> GetLastLogsByBoardId(int boardId, int count)
 	{
-		var logs = await _activityService.GetAllLogs();
+		var logs = await _activityService.GetLastLogsByBoardId(boardId, count);
 		
 		return Ok(logs);
 	}
 	
-	// GET: activity/{cardId}
-	[HttpGet("{cardId}")]
-	public async Task<ActionResult<IEnumerable<ActivityDTO>>> GetLogsByCardId(int cardId)
+	// GET: activity/card/{cardId}/{count}
+	[HttpGet("card/{cardId}/{count}")]
+	public async Task<ActionResult<IEnumerable<ActivityDTO>>> GetLogsByCardId(int cardId, int count)
 	{
-		var logs = await _activityService.GetLogsByCardId(cardId);
+		var logs = await _activityService.GetLastLogsByCardId(cardId, count);
 		
 		return Ok(logs);
 	}

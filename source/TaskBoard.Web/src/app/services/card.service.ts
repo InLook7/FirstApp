@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Card } from '../models/card';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,8 @@ export class CardService {
 
   constructor(private http: HttpClient) { }
 
-  getCards() {
-    return this.http.get("http://localhost:9000/card");      
+  getCards(): Observable<Card[]> {
+    return this.http.get<Card[]>("http://localhost:9000/card");      
   }
 
   addCard(card: Card) {
