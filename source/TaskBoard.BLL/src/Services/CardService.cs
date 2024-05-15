@@ -82,6 +82,7 @@ public class CardService : ICardService
 	public async Task DeleteByIdAsync(int id)
 	{
 		await _unitOfWork.CardRepository.DeleteByIdAsync(id);
+		await _unitOfWork.SaveAsync();
 	}
 	
 	public async Task ChangeStatus(int cardId, int statusId)

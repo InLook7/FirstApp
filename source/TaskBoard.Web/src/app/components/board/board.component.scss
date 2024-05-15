@@ -23,7 +23,54 @@
             font-size: 20px;
             font-weight: bold;
             color: white;
+            background-color: #333;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
         }
+
+        .board-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .button-group {
+            margin-left: 30px;
+
+            .add-button {
+                background-color: #007bff;
+                color: white;
+                margin-right: 15px;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            .edit-button {
+                color: white;
+                background-color: #4CAF50;
+                margin-right: 15px;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+        
+            .delete-button {
+                color: white;
+                background-color: #f44336;
+                margin-right: 15px;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+        }
+        
         .board-history {
             font-size: 20px;
             font-weight: bold;
@@ -59,7 +106,7 @@
         overflow-x: auto;
 
         .board-columns {
-            flex-grow: 1;
+            //flex-grow: 1;
             display: inline-block;
             vertical-align: top;
             white-space: normal;
