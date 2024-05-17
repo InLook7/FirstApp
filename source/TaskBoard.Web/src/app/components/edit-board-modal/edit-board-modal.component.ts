@@ -6,6 +6,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Board } from '../../models/board';
+import { Store } from '@ngrx/store';
+import { AppStateInterface } from '../../store/appState.interface';
+import { updateBoard } from '../../store/actions/board.actions';
 
 @Component({
   selector: 'app-edit-board-modal',
@@ -26,7 +29,7 @@ export class EditBoardModalComponent {
 
   constructor(public dialogRef: MatDialogRef<EditBoardModalComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: Board, 
-    private boardService: BoardService) { }
+    private store: Store<AppStateInterface>) { }
 
   ngOnInit(): void {
   }
@@ -37,11 +40,10 @@ export class EditBoardModalComponent {
 
   onSave(form: NgForm): void {
     if (form.valid) {
-      let board: Board = { id: this.data.id, name: form.value.title };
+      let updatedBoard: Board = { id: this.data.id, name: form.value.title };
       
-      this.boardService.updateBoard(board).subscribe(() => {
-        this.dialogRef.close();
-      });
+      this.store.dispatch(updateBoard({board: updatedBoard}));
+      this.dialogRef.close(updatedBoard.id);
     }
   }
 

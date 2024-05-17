@@ -1,7 +1,7 @@
-import { Card } from "../models/card";
+import { Card } from "../../models/card";
 
 export interface CardState {
   cards: Card[];
-  loading: boolean;
+  isLoading: boolean;
   error: string | null;
 }

@@ -24,14 +24,16 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEnti
 		return await _dbSet.FindAsync(id);
 	}
 	
-	public async Task AddSync(TEntity entity)
+	public async Task<TEntity?> AddSync(TEntity entity)
 	{
 		await _dbSet.AddAsync(entity);
+		return entity;
 	}
 
-	public void Update(TEntity entity)
+	public TEntity Update(TEntity entity)
 	{
 		_dbSet.Update(entity);
+		return entity;
 	}
 	
 	public void Delete(TEntity entity)

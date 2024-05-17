@@ -8,6 +8,9 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { StatusService } from '../../services/status.service';
 import { Status } from '../../models/status';
+import { Store } from '@ngrx/store';
+import { AppStateInterface } from '../../store/appState.interface';
+import { updateStatus } from '../../store/actions/status.actions';
 
 @Component({
   selector: 'app-edit-list-modal',
@@ -28,6 +31,7 @@ export class EditListModalComponent {
 
   constructor(public dialogRef: MatDialogRef<EditListModalComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: Status, 
+    private store: Store<AppStateInterface>,
     private statusService: StatusService) { }
 
   ngOnInit(): void {
@@ -39,11 +43,10 @@ export class EditListModalComponent {
 
   onSave(form: NgForm): void {
     if (form.valid) {
-      let status: Status = { id: this.data.id, name: form.value.title, boardId: this.data.boardId };
+      let updatedStatus: Status = { id: this.data.id, name: form.value.title, boardId: this.data.boardId };
       
-      this.statusService.updateStatus(status).subscribe(() =>{
-        this.dialogRef.close();
-      });
+      this.store.dispatch(updateStatus({status: updatedStatus}));
+      this.dialogRef.close();
     }
   }
 

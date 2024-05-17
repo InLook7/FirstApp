@@ -47,27 +47,30 @@ public class StatusService : IStatusService
 		return _mapper.Map<IEnumerable<StatusDTO>>(statuses);
 	}
 	
-	public async Task AddAsync(StatusDTO dto)
+	public async Task<StatusDTO> AddAsync(StatusDTO dto)
 	{
 		_validator.Validate(dto);
 		var status = _mapper.Map<Status>(dto);
 		
-		await _unitOfWork.StatusRepository.AddSync(status);
+		status = await _unitOfWork.StatusRepository.AddSync(status);
 		await _unitOfWork.SaveAsync();
+		return _mapper.Map<StatusDTO>(status);
 	}
 	
-	public async Task UpdateAsync(StatusDTO dto)
+	public async Task<StatusDTO> UpdateAsync(StatusDTO dto)
 	{
 		_validator.Validate(dto);
 		var status = _mapper.Map<Status>(dto);
 		
-		_unitOfWork.StatusRepository.Update(status);
+		status = _unitOfWork.StatusRepository.Update(status);
 		await _unitOfWork.SaveAsync();
+		return _mapper.Map<StatusDTO>(status);
 	}
 
 	public async Task DeleteByIdAsync(int id)
 	{
 		await _unitOfWork.StatusRepository.DeleteByIdAsync(id);
 		await _unitOfWork.SaveAsync();
+		
 	}
 }

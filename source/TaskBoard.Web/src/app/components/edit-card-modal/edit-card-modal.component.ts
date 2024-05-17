@@ -14,6 +14,15 @@ import { PriorityService } from '../../services/priority.service';
 import { Status } from '../../models/status';
 import { Priority } from '../../models/priority';
 import { Card } from '../../models/card';
+import { Store, select } from '@ngrx/store';
+import { AppStateInterface } from '../../store/appState.interface';
+import { Observable } from 'rxjs';
+import { errorSelector, isLoadingSelector } from '../../store/selectors/card.selectors';
+import { updateCard } from '../../store/actions/card.actions';
+import { getStatusesByBoardId } from '../../store/actions/status.actions';
+import { statusesSelector } from '../../store/selectors/status.selectors';
+import { prioritiesSelector } from '../../store/selectors/priority.selectors';
+import { getPriorities } from '../../store/actions/priority.actions';
 
 @Component({
   selector: 'app-edit-card-modal',
@@ -37,40 +46,25 @@ import { Card } from '../../models/card';
 })
 export class EditCardModalComponent {
 
-  statuses: Status[] = [];
-  priorities: Priority[] = [];
+  statuses$: Observable<Status[]>;
+  priorities$: Observable<Priority[]>;
 
   constructor(public dialogRef: MatDialogRef<EditCardModalComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: Card, 
-    private statusService: StatusService, 
-    private priorityService: PriorityService,
-    private cardService: CardService) { }
+    private store: Store<AppStateInterface>) {
+      this.statuses$ = this.store.pipe(select(statusesSelector));
+      this.priorities$ = this.store.pipe(select(prioritiesSelector));
+    }
 
   ngOnInit(): void {
-    this.loadStatusList();
-    this.loadPriorityList();
+    this.store.dispatch(getStatusesByBoardId({boardId: this.data.boardId}));
+    this.store.dispatch(getPriorities());
   }
 
   onClose(): void {
     this.dialogRef.close();
   }
   
-  loadStatusList(): void {
-    this.statusService.getStatusesByBoardId(this.data.boardId).subscribe({
-      next: (data: any) => {
-        this.statuses = data;
-      }
-    });
-  }
-
-  loadPriorityList(): void {
-    this.priorityService.getPriorities().subscribe({
-      next: (data: any) => {
-        this.priorities = data;
-      }
-    });
-  }
-
   onSave(form: NgForm): void {
     if (form.valid) {
       let cardData: Omit<Card, 'priorityName'> = {
@@ -82,11 +76,10 @@ export class EditCardModalComponent {
         description: form.value.description,
         statusId: form.value.status
       };
-      let card = new Card(cardData);
+      let updatedCard = new Card(cardData);
       
-      this.cardService.updateCard(card).subscribe(() => {
-        this.dialogRef.close();
-      });
+      this.store.dispatch(updateCard({card: updatedCard}));
+      this.dialogRef.close();
     }
   }
 

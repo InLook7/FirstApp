@@ -8,6 +8,14 @@ import { StatusService } from '../../services/status.service';
 import { ActivityService } from '../../services/activity.service';
 import { Card } from '../../models/card';
 import { Activity } from '../../models/activity';
+import { Observable, map } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { AppStateInterface } from '../../store/appState.interface';
+import { getActivitiesByCardId, resetActivities } from '../../store/actions/activity.actions';
+import { activitiesSelector } from '../../store/selectors/activity.selectors';
+import { statusesSelector } from '../../store/selectors/status.selectors';
+import { Status } from '../../models/status';
+import { getStatusByBId, getStatusesByBoardId } from '../../store/actions/status.actions';
 
 @Component({
   selector: 'app-card-modal',
@@ -26,18 +34,24 @@ import { Activity } from '../../models/activity';
 })
 export class CardModalComponent {
   
+  logs$: Observable<Activity[]>;
   count: number = -1;
-  logs: Activity[] = [];
   showMoreButtonVisible = false;
+  status: Observable<Status[]>;
   statusName: string;
 
   constructor(public dialogRef: MatDialogRef<CardModalComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: Card,
-    private statusService: StatusService, 
-    private activityService: ActivityService) { }
+    private store: Store<AppStateInterface>) {
+      this.logs$ = this.store.pipe(select(activitiesSelector));
+      this.status = this.store.pipe(select(statusesSelector));
+    }
 
   ngOnInit(): void {
-    this.getStatusById();
+    this.store.dispatch(resetActivities());
+    this.store.dispatch(getStatusesByBoardId({boardId: this.data.boardId}));
+    this.status.pipe(map(status => status.find(status => status.id === this.data.statusId)?.name!)
+    ).subscribe(statusName => {this.statusName = statusName });
     this.loadLastLogsByCardId();
   }
 
@@ -47,16 +61,13 @@ export class CardModalComponent {
 
   loadLastLogsByCardId(): void {
     this.count += 1;
-    this.activityService.getLastLogsByCardId(this.data.id, this.count).subscribe({
-      next: (data: Activity[]) => {
-        this.logs.push(...data);
-
-        if(data.length == 20) {
-          this.showMoreButtonVisible = true;
-        }
-        else {
-          this.showMoreButtonVisible = false;
-        }
+    this.store.dispatch(getActivitiesByCardId({cardId: this.data.id, count: this.count}));
+    this.logs$.subscribe(logs => {
+      if(logs.length == 20) {
+        this.showMoreButtonVisible = true;
+      }
+      else {
+        this.showMoreButtonVisible = false;
       }
     });
   }
@@ -73,12 +84,4 @@ export class CardModalComponent {
     return formattedDetails;
   }
 
-  getStatusById() {
-    this.statusService.getStatusById(this.data.statusId).subscribe({
-      next: (data: any) => {
-        this.statusName = data.name;
-      }
-    })
-  }
-  
 }

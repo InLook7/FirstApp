@@ -11,16 +11,16 @@ export class BoardService {
 
   constructor(private http: HttpClient) { }
 
-  getBoards(){
-    return this.http.get("http://localhost:9000/board");      
+  getBoards(): Observable<Board[]>{
+    return this.http.get<Board[]>("http://localhost:9000/board");      
   }
 
-  addBoard(board: Board) {
-    return this.http.post("http://localhost:9000/board", board); 
+  addBoard(board: Board): Observable<Board> {
+    return this.http.post<Board>("http://localhost:9000/board", board); 
   }
 
-  updateBoard(board: Board) {
-    return this.http.put("http://localhost:9000/board", board);
+  updateBoard(board: Board): Observable<Board> {
+    return this.http.put<Board>("http://localhost:9000/board", board);
   }
 
   deleteBoard(boardId: number) {

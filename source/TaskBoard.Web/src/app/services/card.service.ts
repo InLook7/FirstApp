@@ -15,12 +15,12 @@ export class CardService {
     return this.http.get<Card[]>("http://localhost:9000/card");      
   }
 
-  addCard(card: Card) {
-    return this.http.post("http://localhost:9000/card", card)
+  addCard(card: Card): Observable<Card> {
+    return this.http.post<Card>("http://localhost:9000/card", card)
   }
 
-  updateCard(card: Card) {
-    return this.http.put("http://localhost:9000/card", card);
+  updateCard(card: Card): Observable<Card> {
+    return this.http.put<Card>("http://localhost:9000/card", card);
   }
 
   deleteCard(cardId: number) {

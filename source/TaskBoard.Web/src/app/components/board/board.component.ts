@@ -24,8 +24,13 @@ import { CardModalComponent } from '../card-modal/card-modal.component';
 import { HistoryModalComponent } from '../history-modal/history-modal.component';
 import { NewBoardModalComponent } from '../new-board-modal/new-board-modal.component';
 import { EditBoardModalComponent } from '../edit-board-modal/edit-board-modal.component';
-import { getCards } from '../../store/actions/card.actions';
-import { selectCards } from '../../store/card.selector';
+import { changeStatusCard, deleteCard, getCards } from '../../store/actions/card.actions';
+import { cardsSelector } from '../../store/selectors/card.selectors';
+import { AppStateInterface } from '../../store/appState.interface';
+import { deleteStatus, getStatusesByBoardId } from '../../store/actions/status.actions';
+import { statusesSelector } from '../../store/selectors/status.selectors';
+import { boardsSelector } from '../../store/selectors/board.selectors';
+import { deleteBoard, getBoards } from '../../store/actions/board.actions';
 
 @Component({
   selector: 'app-board',
@@ -50,85 +55,56 @@ import { selectCards } from '../../store/card.selector';
 export class BoardComponent {
 
   cards$: Observable<Card[]>;
-  boards: Board[] = [];
-  statuses: Status[] = [];
+  statuses$: Observable<Status[]>;
+  boards$: Observable<Board[]>;
   currentBoard: Board;
   statusCounts: { [statusId: number]: number } = {};
 
   constructor(private dialog: MatDialog, 
-    private store: Store, 
-    private boardService: BoardService,
-    private cardService: CardService, 
-    private statusService: StatusService, 
-    private analyticsService: AnalyticsService) { }
+    private store: Store<AppStateInterface>,
+    private cardService: CardService,
+    private analyticsService: AnalyticsService) {
+      this.cards$ = this.store.pipe(select(cardsSelector));
+      this.statuses$ = this.store.pipe(select(statusesSelector));
+      this.boards$ = this.store.pipe(select(boardsSelector));
+    }
 
   ngOnInit(): void {
-    this.loadBoardList();
+    this.store.dispatch(getBoards());
+    this.boards$.subscribe(boards => {
+      this.setBoard(boards[0].id);
+    });
     this.loadCardList();
   }
 
-  loadBoardList(boardId?: number) {
-    this.boardService.getBoards().subscribe({
-      next: (data: any) => {
-        this.boards = data;
-        if (!this.currentBoard) {
-          this.setBoard(this.boards[0].id);
-        }
-        else {
-          this.setBoard(boardId);
-        }
-      }
-    })
+  setBoard(boardId: number) {
+    this.boards$.subscribe(boards => {
+      this.currentBoard = boards.find(b => b.id === boardId)!;
+
+      this.loadStatusList();
+    });
   }
 
   loadStatusList(): void {
-    this.statusService.getStatusesByBoardId(this.currentBoard.id).subscribe({
-      next: (data: any) => {
-        this.statuses = data;
-      }
-    });
+    this.store.dispatch(getStatusesByBoardId({boardId: this.currentBoard.id}));
 
     this.loadCountCardsByStatuses();
   }
 
   loadCardList(): void {
     this.store.dispatch(getCards());
-    this.cards$ = this.store.pipe(select(selectCards));
 
     this.loadCountCardsByStatuses();
   }
 
-  loadCountCardsByStatuses(): void {
-    this.analyticsService.getCountCardsByStatuses().subscribe({
-      next: (data: any) => {
-        data.forEach((statusCount: any) => {
-          this.statusCounts[statusCount.statusId] = statusCount.countCards;
-        });
-      }
-    })
-  }
-
-  setBoard(boardId?: number) {
-    if (boardId) {
-      this.currentBoard = this.boards.find(b => b.id == boardId)!;
-    }
-    else {
-      this.currentBoard = this.boards[this.boards.length - 1];
-    }
-    
-    this.loadStatusList();
-  }
-
-  filterCards(statudId: number) {
+  loadCardsByStatus(statudId: number) {
     return this.cards$.pipe(
       map(cards => cards.filter(x => x.statusId == statudId))
     );
   }
 
   changeStatusCard(cardId: number, statusId: number): void {
-    this.cardService.changeStatusCard(cardId, statusId).subscribe(() => {
-      this.loadCardList();
-    });
+    this.store.dispatch(changeStatusCard({cardId: cardId, statusId: statusId}));
   }
 
   openNewBoardModal(): void {
@@ -138,7 +114,9 @@ export class BoardComponent {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.loadBoardList(this.currentBoard.id);
+      this.boards$.subscribe(boards => {
+          this.setBoard(boards[boards.length - 1].id);
+      });
     });
   }
 
@@ -149,9 +127,7 @@ export class BoardComponent {
       data: this.currentBoard
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.loadStatusList();
-    });
+    dialogRef.afterClosed().subscribe();
   }
 
   openNewCardModal(): void {
@@ -161,8 +137,8 @@ export class BoardComponent {
       data: this.currentBoard
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.loadCardList();
+    dialogRef.afterClosed().subscribe((statusId) => {
+      this.loadCardsByStatus(statusId);
     });
   }
 
@@ -173,8 +149,10 @@ export class BoardComponent {
       data: this.currentBoard
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.loadBoardList(this.currentBoard.id);
+    dialogRef.afterClosed().subscribe((boardId) => {
+      this.boards$.subscribe(boards => {
+        this.setBoard(boards.find(board => board.id === boardId)!.id);
+      });
     });
   }
 
@@ -185,9 +163,7 @@ export class BoardComponent {
       data: status
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.loadStatusList();
-    });
+    dialogRef.afterClosed().subscribe();
   }
 
   openEditCardModal(card: Card): void {
@@ -197,32 +173,19 @@ export class BoardComponent {
       data: card
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.loadCardList();
-    });
+    dialogRef.afterClosed().subscribe();
   }
 
-  deleteBoard() {
-    if (this.boards.length > 1) {
-      this.boardService.deleteBoard(this.currentBoard.id).subscribe(() => {
-        this.loadBoardList();
-      })
-    }
-    else {
-      console.log("Last board");
-    }
+  deleteBoard(boardId: number) {
+    this.store.dispatch(deleteBoard({ boardId }));
   }
 
   deleteStatus(statusId: number) {
-    this.statusService.deleteStatus(statusId).subscribe(() => {
-      this.loadStatusList();
-    });
+    this.store.dispatch(deleteStatus({ statusId }));
   }
 
   deleteCard(cardId: number) {
-    this.cardService.deleteCard(cardId).subscribe(() => {
-      this.loadCardList();
-    })
+    this.store.dispatch(deleteCard({ cardId }));
   }
 
   openCardModal(card: Card): void {
@@ -235,6 +198,16 @@ export class BoardComponent {
     this.dialog.open(HistoryModalComponent, {
       data: this.currentBoard.id
     });
+  }
+  
+  loadCountCardsByStatuses(): void {
+    this.analyticsService.getCountCardsByStatuses().subscribe({
+      next: (data: any) => {
+        data.forEach((statusCount: any) => {
+          this.statusCounts[statusCount.statusId] = statusCount.countCards;
+        });
+      }
+    })
   }
 
 }

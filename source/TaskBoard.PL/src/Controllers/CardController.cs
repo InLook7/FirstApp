@@ -30,14 +30,14 @@ public class CardController : ControllerBase
 	
 	// POST: card/
 	[HttpPost]
-	public async Task<ActionResult> AddCard([FromBody] CardDTO card)
+	public async Task<ActionResult<CardDTO>> AddCard([FromBody] CardDTO card)
 	{
-		await _cardService.AddAsync(card);
+		card = await _cardService.AddAsync(card);
 		
 		var newCard = await _cardService.GetLastAsync();
 		await _activityService.AddCreateLog(newCard);
 		
-		return Ok();
+		return Ok(card);
 	}
 	
 	// PUT: card/
@@ -47,12 +47,12 @@ public class CardController : ControllerBase
 		var previousCard = await _cardService.GetByIdWithoutTrackingAsync(card.Id);
 		var status = await _statusService.GetByIdAsync(card.StatusId);
 	
-		await _cardService.UpdateAsync(card);
+		card = await _cardService.UpdateAsync(card);
 		
 		var updatedCard = await _cardService.GetByIdWithDetailsAsync(card.Id);
 		await _activityService.AddUpdateLog(previousCard, updatedCard, status.Name);
 		
-		return Ok();
+		return Ok(card);
 	}
 	
 	// DELETE: card/{cardId}

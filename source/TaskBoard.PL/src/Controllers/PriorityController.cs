@@ -28,8 +28,8 @@ public class PriorityController : ControllerBase
 	[HttpPost]
 	public async Task<ActionResult> AddPriority([FromBody] PriorityDTO priority)
 	{
-		await _priorityService.AddAsync(priority);
+		priority = await _priorityService.AddAsync(priority);
 		
-		return Ok();
+		return Ok(priority);
 	}
 }

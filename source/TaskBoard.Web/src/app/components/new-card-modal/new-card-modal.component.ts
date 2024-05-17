@@ -15,6 +15,15 @@ import { Status } from '../../models/status';
 import { Card } from '../../models/card';
 import { Priority } from '../../models/priority';
 import { Board } from '../../models/board';
+import { Store, select } from '@ngrx/store';
+import { AppStateInterface } from '../../store/appState.interface';
+import { Observable } from 'rxjs';
+import { errorSelector, isLoadingSelector } from '../../store/selectors/card.selectors';
+import { createCard } from '../../store/actions/card.actions';
+import { getStatusesByBoardId } from '../../store/actions/status.actions';
+import { statusesSelector } from '../../store/selectors/status.selectors';
+import { getPriorities } from '../../store/actions/priority.actions';
+import { prioritiesSelector } from '../../store/selectors/priority.selectors';
 
 @Component({
   selector: 'app-new-card-modal',
@@ -38,38 +47,23 @@ import { Board } from '../../models/board';
 })
 export class NewCardModalComponent {
 
-  statuses: Status[] = [];
-  priorities: Priority[] = [];
+  statuses$: Observable<Status[]>;
+  priorities$: Observable<Priority[]>;
 
   constructor(public dialogRef: MatDialogRef<NewCardModalComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: Board, 
-    private statusService: StatusService, 
-    private priorityService: PriorityService, 
-    private cardService: CardService) { }
+    private store: Store<AppStateInterface>) {
+      this.statuses$ = this.store.pipe(select(statusesSelector));
+      this.priorities$ = this.store.pipe(select(prioritiesSelector));
+    }
 
   ngOnInit(): void {
-    this.loadStatusList();
-    this.loadPriorityList();
+    this.store.dispatch(getStatusesByBoardId({boardId: this.data.id}));
+    this.store.dispatch(getPriorities());
   }
 
   onClose(): void {
     this.dialogRef.close();
-  }
-
-  loadStatusList(): void {
-    this.statusService.getStatusesByBoardId(this.data.id).subscribe({
-      next: (data: any) => {
-        this.statuses = data;
-      }
-    });
-  }
-
-  loadPriorityList(): void {
-    this.priorityService.getPriorities().subscribe({
-      next: (data: any) => {
-        this.priorities = data;
-      }
-    });
   }
 
   onCreate(form: NgForm): void {
@@ -82,11 +76,10 @@ export class NewCardModalComponent {
         description: form.value.description,
         statusId: form.value.status
       };
-      let card = new Card(cardData);
+      let newCard = new Card(cardData);
 
-      this.cardService.addCard(card).subscribe(() => {
-        this.dialogRef.close();
-      });
+      this.store.dispatch(createCard({card: newCard}));
+      this.dialogRef.close(newCard.statusId);
     }
   }
 

@@ -34,22 +34,24 @@ public class PriorityService : IPriorityService
 		return _mapper.Map<PriorityDTO>(priority);
 	}
 	
-	public async Task AddAsync(PriorityDTO dto)
+	public async Task<PriorityDTO> AddAsync(PriorityDTO dto)
 	{
 		_validator.Validate(dto);
 		var priority = _mapper.Map<Priority>(dto);
 		
-		await _unitOfWork.PriorityRepository.AddSync(priority);
+		priority = await _unitOfWork.PriorityRepository.AddSync(priority);
 		await _unitOfWork.SaveAsync();
+		return _mapper.Map<PriorityDTO>(priority);
 	}
 	
-	public async Task UpdateAsync(PriorityDTO dto)
+	public async Task<PriorityDTO> UpdateAsync(PriorityDTO dto)
 	{
 		_validator.Validate(dto);
 		var priority = _mapper.Map<Priority>(dto);
 		
-		_unitOfWork.PriorityRepository.Update(priority);
+		priority = _unitOfWork.PriorityRepository.Update(priority);
 		await _unitOfWork.SaveAsync();
+		return _mapper.Map<PriorityDTO>(priority);
 	}
 
 	public async Task DeleteByIdAsync(int id)

@@ -33,20 +33,22 @@ public class BoardService : IBoardService
 		return _mapper.Map<BoardDTO>(board);
 	}
 	
-	public async Task AddAsync(BoardDTO dto)
+	public async Task<BoardDTO> AddAsync(BoardDTO dto)
 	{
 		var board = _mapper.Map<Board>(dto);
 		
-		await _unitOfWork.BoardRepository.AddSync(board);
+		board = await _unitOfWork.BoardRepository.AddSync(board);
 		await _unitOfWork.SaveAsync();
+		return _mapper.Map<BoardDTO>(board);
 	}
 	
-	public async Task UpdateAsync(BoardDTO dto)
+	public async Task<BoardDTO> UpdateAsync(BoardDTO dto)
 	{
 		var board = _mapper.Map<Board>(dto);
 		
-		_unitOfWork.BoardRepository.Update(board);
+		board = _unitOfWork.BoardRepository.Update(board);
 		await _unitOfWork.SaveAsync();
+		return _mapper.Map<BoardDTO>(board);
 	}
 
 	public async Task DeleteByIdAsync(int id)

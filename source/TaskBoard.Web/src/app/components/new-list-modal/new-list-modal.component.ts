@@ -8,6 +8,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { StatusService } from '../../services/status.service';
 import { Status } from '../../models/status';
 import { Board } from '../../models/board';
+import { createStatus } from '../../store/actions/status.actions';
+import { Store } from '@ngrx/store';
+import { AppStateInterface } from '../../store/appState.interface';
+import { Observable } from 'rxjs';
+import { errorSelector, isLoadingSelector } from '../../store/selectors/status.selectors';
 
 @Component({
   selector: 'app-new-list-modal',
@@ -26,9 +31,15 @@ import { Board } from '../../models/board';
 })
 export class NewListModalComponent {
 
+  isLoading$: Observable<boolean>; 
+  error$: Observable<string | null>;
+
   constructor(public dialogRef: MatDialogRef<NewListModalComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: Board, 
-    private statusService: StatusService) { }
+    private store: Store<AppStateInterface>) {
+      this.isLoading$ = this.store.select(isLoadingSelector);
+      this.error$ = this.store.select(errorSelector);
+     }
 
   ngOnInit(): void {
   }
@@ -40,11 +51,10 @@ export class NewListModalComponent {
   onCreate(form: NgForm): void {
     if (form.valid) {
       let statusData: Omit<Status, 'id'> = { name: form.value.title, boardId: this.data.id };
-      let status = new Status(statusData);
+      let newStatus = new Status(statusData);
       
-      this.statusService.addStatus(status).subscribe(() => {
-        this.dialogRef.close();
-      });
+      this.store.dispatch(createStatus({status: newStatus}));
+      this.dialogRef.close();
     }
   }
 

@@ -8,9 +8,9 @@ public interface IRepository<TEntity> where TEntity : BaseEntity
 	
 	Task<TEntity?> GetByIdAsync(int id);
 	
-	Task AddSync(TEntity entity);
+	Task<TEntity?> AddSync(TEntity entity);
 	
-	void Update(TEntity entity);
+	TEntity? Update(TEntity entity);
 	
 	void Delete(TEntity entity);
 	

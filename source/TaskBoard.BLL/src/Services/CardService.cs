@@ -61,22 +61,28 @@ public class CardService : ICardService
 		return _mapper.Map<CardDTO>(lastCard);
 	}
 	
-	public async Task AddAsync(CardDTO dto)
+	public async Task<CardDTO> AddAsync(CardDTO dto)
 	{
 		_validator.Validate(dto);
 		var card = _mapper.Map<Card>(dto);
 		
-		await _unitOfWork.CardRepository.AddSync(card);
+		card = await _unitOfWork.CardRepository.AddSync(card);
 		await _unitOfWork.SaveAsync();
+		
+		card = await _unitOfWork.CardRepository.GetByIdWithDetailsAsync(card.Id);
+		return _mapper.Map<CardDTO>(card);
 	}
 
-	public async Task UpdateAsync(CardDTO dto)
+	public async Task<CardDTO> UpdateAsync(CardDTO dto)
 	{
 		_validator.Validate(dto);
 		var card = _mapper.Map<Card>(dto);
 		
-		_unitOfWork.CardRepository.Update(card);
+		card = _unitOfWork.CardRepository.Update(card);
 		await _unitOfWork.SaveAsync();
+		
+		card = await _unitOfWork.CardRepository.GetByIdWithDetailsAsync(card.Id);
+		return _mapper.Map<CardDTO>(card);
 	}
 
 	public async Task DeleteByIdAsync(int id)

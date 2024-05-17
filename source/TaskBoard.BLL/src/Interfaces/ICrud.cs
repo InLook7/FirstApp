@@ -8,9 +8,9 @@ public interface ICrud<TDTO> where TDTO : BaseDTO
 	
 	Task<TDTO> GetByIdAsync(int id);
 	
-	Task AddAsync(TDTO dto);
+	Task<TDTO> AddAsync(TDTO dto);
 	
-	Task UpdateAsync(TDTO dto);
+	Task<TDTO> UpdateAsync(TDTO dto);
 	
 	Task DeleteByIdAsync(int id);
 }

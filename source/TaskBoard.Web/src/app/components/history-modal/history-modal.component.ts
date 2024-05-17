@@ -6,6 +6,11 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { ActivityService } from '../../services/activity.service';
 import { Activity } from '../../models/activity';
+import { Store, select } from '@ngrx/store';
+import { AppStateInterface } from '../../store/appState.interface';
+import { Observable } from 'rxjs';
+import { activitiesSelector } from '../../store/selectors/activity.selectors';
+import { getActivitiesByBoardId, resetActivities } from '../../store/actions/activity.actions';
 
 @Component({
   selector: 'app-history-modal',
@@ -23,15 +28,18 @@ import { Activity } from '../../models/activity';
 })
 export class HistoryModalComponent {
 
+  logs$: Observable<Activity[]>;
   count: number = -1;
-  logs: Activity[] = [];
   showMoreButtonVisible = false;
 
   constructor(public dialogRef: MatDialogRef<HistoryModalComponent>, 
     @Inject(MAT_DIALOG_DATA) public data: number,
-    private activityService: ActivityService) { }
+    private store: Store<AppStateInterface>) {
+      this.logs$ = this.store.pipe(select(activitiesSelector));
+    }
 
   ngOnInit(): void {
+    this.store.dispatch(resetActivities());
     this.loadLastLogsByBoardId();
   }
 
@@ -41,16 +49,13 @@ export class HistoryModalComponent {
 
   loadLastLogsByBoardId(): void {
     this.count += 1;
-    this.activityService.getLastLogsByBoardId(this.data, this.count).subscribe({
-      next: (data: Activity[]) => {
-        this.logs.push(...data);
-
-        if(data.length == 20) {
-          this.showMoreButtonVisible = true;
-        }
-        else {
-          this.showMoreButtonVisible = false;
-        }
+    this.store.dispatch(getActivitiesByBoardId({boardId: this.data, count: this.count}));
+    this.logs$.subscribe(logs => {
+      if(logs.length == 20) {
+        this.showMoreButtonVisible = true;
+      }
+      else {
+        this.showMoreButtonVisible = false;
       }
     });
   }

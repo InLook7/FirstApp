@@ -7,6 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 
 import { Board } from '../../models/board';
 import { BoardService } from '../../services/board.service';
+import { Store } from '@ngrx/store';
+import { AppStateInterface } from '../../store/appState.interface';
+import { createBoard } from '../../store/actions/board.actions';
 
 @Component({
   selector: 'app-new-board-modal',
@@ -25,7 +28,8 @@ import { BoardService } from '../../services/board.service';
 })
 export class NewBoardModalComponent {
 
-  constructor(public dialogRef: MatDialogRef<NewBoardModalComponent>, 
+  constructor(public dialogRef: MatDialogRef<NewBoardModalComponent>,
+    private store: Store<AppStateInterface>, 
     private boardService: BoardService) { }
 
   ngOnInit(): void {
@@ -38,11 +42,10 @@ export class NewBoardModalComponent {
   onCreate(form: NgForm): void {
     if (form.valid) {
       let boardData: Omit<Board, 'id'> = { name: form.value.title };
-      let board = new Board(boardData);
+      let newBoard = new Board(boardData);
       
-      this.boardService.addBoard(board).subscribe(() => {
-        this.dialogRef.close();
-      });
+      this.store.dispatch(createBoard({board: newBoard}));
+      this.dialogRef.close();
     }
   }
 

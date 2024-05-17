@@ -8,7 +8,7 @@
 
     <div class="content">
       <ul>
-        <li class="log-item" *ngFor="let log of logs">
+        <li class="log-item" *ngFor="let log of logs$ | async">
           <span [innerHTML]="formatDetails(log.details)"></span> <br> 
           <span class="log-date">{{ log.date | date: "medium" }}</span>
         </li>

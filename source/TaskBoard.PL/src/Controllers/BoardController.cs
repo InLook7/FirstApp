@@ -28,18 +28,18 @@ public class BoardController : ControllerBase
 	[HttpPost]
 	public async Task<ActionResult> AddBoard([FromBody] BoardDTO board)
 	{
-		await _boardService.AddAsync(board);
+		board = await _boardService.AddAsync(board);
 		
-		return Ok();
+		return Ok(board);
 	}
 	
 	// PUT: board/
 	[HttpPut]
 	public async Task<ActionResult> UpdateBoard([FromBody] BoardDTO board)
 	{
-		await _boardService.UpdateAsync(board);
+		board = await _boardService.UpdateAsync(board);
 		
-		return Ok();
+		return Ok(board);
 	}
 	
 	// DELETE: board/{id}

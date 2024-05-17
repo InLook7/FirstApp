@@ -37,18 +37,18 @@ public class StatusController : ControllerBase
 	[HttpPost]
 	public async Task<ActionResult> AddStatus([FromBody] StatusDTO status)
 	{
-		await _statusService.AddAsync(status);
+		status = await _statusService.AddAsync(status);
 		
-		return Ok();
+		return Ok(status);
 	}
 	
 	// PUT: status/
 	[HttpPut]
 	public async Task<ActionResult> UpdateStatus([FromBody] StatusDTO status)
 	{
-		await _statusService.UpdateAsync(status);
+		status = await _statusService.UpdateAsync(status);
 		
-		return Ok();
+		return Ok(status);
 	}
 	
 	// DELETE: status/{id}
