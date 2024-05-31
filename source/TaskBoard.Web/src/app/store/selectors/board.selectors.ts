@@ -14,6 +14,14 @@ export const boardsSelector = createSelector(
   (state) => state.boards
 );
 
+export const boardSelector = (boardId: number) => createSelector(
+  boardsSelector, (boards) => boards.find(board => board.id === boardId)
+);
+
+export const firstBoardSelector = createSelector(
+  boardsSelector, (boards) => boards[0]
+);
+
 export const errorSelector = createSelector(
   selectFeature,
   (state) => state.error

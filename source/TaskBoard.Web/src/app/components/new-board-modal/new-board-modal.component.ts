@@ -29,8 +29,7 @@ import { createBoard } from '../../store/actions/board.actions';
 export class NewBoardModalComponent {
 
   constructor(public dialogRef: MatDialogRef<NewBoardModalComponent>,
-    private store: Store<AppStateInterface>, 
-    private boardService: BoardService) { }
+    private store: Store<AppStateInterface>) { }
 
   ngOnInit(): void {
   }
@@ -44,8 +43,8 @@ export class NewBoardModalComponent {
       let boardData: Omit<Board, 'id'> = { name: form.value.title };
       let newBoard = new Board(boardData);
       
-      this.store.dispatch(createBoard({board: newBoard}));
-      this.dialogRef.close();
+      let boardId = this.store.dispatch(createBoard({board: newBoard}));
+      this.dialogRef.close(boardId);
     }
   }
 

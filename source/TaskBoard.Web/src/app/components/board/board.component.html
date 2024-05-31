@@ -3,8 +3,8 @@
 
         <div class="board-bar">
             <div class="board-controls">
-                <select class="board-name" (change)="loadStatusList()" [(ngModel)]="currentBoard">
-                    <option *ngFor="let board of boards$ | async" [ngValue]="board">
+                <select class="board-name" #selectedBoard (change)="loadStatusList(+selectedBoard.value)">
+                    <option *ngFor="let board of boards$ | async" [value]="board.id">
                         {{board.name}}
                     </option>  
                 </select>
@@ -12,11 +12,11 @@
                 <div class="button-group">
                     <button class="add-button" (click)="openNewBoardModal()">Add</button>
                     <button class="edit-button" (click)="openEditBoardModal()">Edit</button>
-                    <button class="delete-button" (click)="deleteBoard(currentBoard.id)">Delete</button>
+                    <button class="delete-button" (click)="deleteBoard(+selectedBoard.value)">Delete</button>
                 </div>
              </div>
 
-            <button (click)="openHistoryModal()">
+            <button (click)="openHistoryModal(+selectedBoard.value)">
                 <p class="board-history">History</p>
             </button>
         </div>

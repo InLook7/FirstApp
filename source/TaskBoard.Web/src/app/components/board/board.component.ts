@@ -29,7 +29,7 @@ import { cardsSelector } from '../../store/selectors/card.selectors';
 import { AppStateInterface } from '../../store/appState.interface';
 import { deleteStatus, getStatusesByBoardId } from '../../store/actions/status.actions';
 import { statusesSelector } from '../../store/selectors/status.selectors';
-import { boardsSelector } from '../../store/selectors/board.selectors';
+import { boardSelector, boardsSelector, firstBoardSelector } from '../../store/selectors/board.selectors';
 import { deleteBoard, getBoards } from '../../store/actions/board.actions';
 
 @Component({
@@ -57,36 +57,31 @@ export class BoardComponent {
   cards$: Observable<Card[]>;
   statuses$: Observable<Status[]>;
   boards$: Observable<Board[]>;
-  currentBoard: Board;
+  currentBoard$: Observable<Board | undefined>;
   statusCounts: { [statusId: number]: number } = {};
 
   constructor(private dialog: MatDialog, 
     private store: Store<AppStateInterface>,
-    private cardService: CardService,
     private analyticsService: AnalyticsService) {
       this.cards$ = this.store.pipe(select(cardsSelector));
       this.statuses$ = this.store.pipe(select(statusesSelector));
       this.boards$ = this.store.pipe(select(boardsSelector));
-    }
+  }
 
   ngOnInit(): void {
     this.store.dispatch(getBoards());
-    this.boards$.subscribe(boards => {
-      this.setBoard(boards[0].id);
-    });
+    this.currentBoard$ = this.store.select(firstBoardSelector);
     this.loadCardList();
   }
 
   setBoard(boardId: number) {
-    this.boards$.subscribe(boards => {
-      this.currentBoard = boards.find(b => b.id === boardId)!;
+    this.currentBoard$ = this.store.select(boardSelector(boardId));
 
-      this.loadStatusList();
-    });
+    this.loadStatusList(boardId);
   }
 
-  loadStatusList(): void {
-    this.store.dispatch(getStatusesByBoardId({boardId: this.currentBoard.id}));
+  loadStatusList(boardId: number): void {
+    this.store.dispatch(getStatusesByBoardId({boardId: boardId}));
 
     this.loadCountCardsByStatuses();
   }
@@ -113,10 +108,8 @@ export class BoardComponent {
       height: '250px'
     });
 
-    dialogRef.afterClosed().subscribe(() => {
-      this.boards$.subscribe(boards => {
-          this.setBoard(boards[boards.length - 1].id);
-      });
+    dialogRef.afterClosed().subscribe((boardId) => {
+        this.setBoard(boardId);
     });
   }
 
@@ -124,7 +117,7 @@ export class BoardComponent {
     const dialogRef = this.dialog.open(NewListModalComponent, {
       width: '250px',
       height: '250px',
-      data: this.currentBoard
+      data: this.currentBoard$
     });
 
     dialogRef.afterClosed().subscribe();
@@ -134,7 +127,7 @@ export class BoardComponent {
     const dialogRef = this.dialog.open(NewCardModalComponent, {
       width: '610px',
       height: '610px',
-      data: this.currentBoard
+      data: this.currentBoard$
     });
 
     dialogRef.afterClosed().subscribe((statusId) => {
@@ -146,13 +139,11 @@ export class BoardComponent {
     const dialogRef = this.dialog.open(EditBoardModalComponent, {
       width: '250px',
       height: '250px',
-      data: this.currentBoard
+      data: this.currentBoard$
     });
 
     dialogRef.afterClosed().subscribe((boardId) => {
-      this.boards$.subscribe(boards => {
-        this.setBoard(boards.find(board => board.id === boardId)!.id);
-      });
+        this.setBoard(boardId);
     });
   }
 
@@ -194,9 +185,9 @@ export class BoardComponent {
     });
   }
 
-  openHistoryModal(): void {
+  openHistoryModal(boardId: number): void {
     this.dialog.open(HistoryModalComponent, {
-      data: this.currentBoard.id
+      data: boardId
     });
   }
   

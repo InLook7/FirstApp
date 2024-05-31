@@ -32,6 +32,7 @@ export class EditBoardModalComponent {
     private store: Store<AppStateInterface>) { }
 
   ngOnInit(): void {
+    console.log(this.data.id, this.data.name);
   }
 
   onClose(): void {
